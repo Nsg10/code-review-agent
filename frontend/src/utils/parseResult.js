@@ -1,27 +1,24 @@
 export function parseAgentResult(raw) {
   const result = { score: null, summary: null, sections: [] };
+
   const scoreMatch = raw.match(/(?:SCORE|PERFORMANCE_SCORE|ARCHITECTURE_SCORE|SEVERITY):\s*(.+)/i);
   if (scoreMatch) {
     const val = scoreMatch[1].trim();
     const num = parseInt(val);
     result.score = isNaN(num) ? val : num;
   }
-  const summaryMatch = raw.match(/SUMMARY:\s*([\s\S]+?)(?=\n[A-Z_]+:|$)/);
+
+  const summaryMatch = raw.match(/SUMMARY:\s*([\s\S]+?)(?=\n[A-Z][A-Z_]+:|$)/);
   if (summaryMatch) {
     result.summary = summaryMatch[1].trim();
   }
-  const sectionRegex = /^([A-Z][A-Z_]+):\s*$/gm;
+
+  const sectionRegex = /([A-Z][A-Z_ ]+):\s*\n([\s\S]+?)(?=\n[A-Z][A-Z_ ]+:|$)/g;
   let match;
-  const sectionPositions = [];
   while ((match = sectionRegex.exec(raw)) !== null) {
-    const name = match[1];
+    const name = match[1].trim();
     if (name === "SUMMARY") continue;
-    sectionPositions.push({ name, index: match.index + match[0].length });
-  }
-  for (let i = 0; i < sectionPositions.length; i++) {
-    const { name, index } = sectionPositions[i];
-    const end = sectionPositions[i + 1]?.index ?? raw.length;
-    const content = raw.slice(index, end).trim();
+    const content = match[2].trim();
     const items = content
       .split("\n")
       .map((l) => l.trim())
@@ -31,6 +28,7 @@ export function parseAgentResult(raw) {
       result.sections.push({ title: formatTitle(name), items });
     }
   }
+
   return result;
 }
 
