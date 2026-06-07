@@ -11,8 +11,8 @@ HEADERS = {
     "Accept": "application/vnd.github.v3+json"
 }
 
-MAX_FILES = 10
-MAX_FILE_SIZE = 50000  # 50KB per file
+MAX_FILES = 5
+MAX_FILE_SIZE = 3000  # 3KB per file
 
 
 def parse_repo_url(url: str) -> tuple[str, str]:
