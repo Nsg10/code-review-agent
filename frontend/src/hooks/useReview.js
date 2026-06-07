@@ -27,5 +27,11 @@ export function useReview() {
     }
   };
 
-  return { loading, results, error, reviewRepo };
+  const reset = () => {
+    setResults(null);
+    setError(null);
+    setLoading(false);
+  };
+
+  return { loading, results, error, reviewRepo, reset };
 }

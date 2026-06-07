@@ -5,24 +5,49 @@ import { LoadingState } from "./components/LoadingState";
 import "./App.css";
 
 function App() {
-  const { loading, results, error, reviewRepo } = useReview();
+  const { loading, results, error, reviewRepo, reset } = useReview();
 
   return (
     <div className="app">
-      <header className="header">
-        <h1 className="title">Code Review Agent</h1>
-        <p className="subtitle">
-          Paste a GitHub repo URL and get instant reviews from 4 AI agents
+      <section className="hero">
+        <div className="badge">
+          <span className="badge-dot" />
+          4 AI Agents Running in Parallel
+        </div>
+        <h1 className="hero-title">
+          <span className="word-code">Code</span>
+          <span className="word-lens">Lens</span>
+        </h1>
+        <p className="hero-subtitle">
+          Paste any public GitHub repository URL and get an instant
+          multi-perspective AI code review in seconds.
         </p>
-      </header>
+        <div className="agent-pills">
+          <span className="pill"><span className="pill-icon">⚙️</span> Code Quality</span>
+          <span className="pill"><span className="pill-icon">🐛</span> Bug Detector</span>
+          <span className="pill"><span className="pill-icon">⚡</span> Optimizer</span>
+          <span className="pill"><span className="pill-icon">🏗️</span> System Design</span>
+        </div>
+      </section>
 
-      <main className="main">
+      <div className="input-section">
         <UrlInput onSubmit={reviewRepo} loading={loading} />
+      </div>
 
-        {error && <div className="error-box">{error}</div>}
-        {loading && <LoadingState />}
-        {results && !loading && <Dashboard results={results} />}
-      </main>
+      {error && (
+        <div className="error-box">
+          <div className="error-inner">{error}</div>
+        </div>
+      )}
+
+      {loading && <LoadingState />}
+      {results && !loading && (
+        <Dashboard results={results} onReset={reset} />
+      )}
+
+      <footer className="footer">
+        Built with LangChain · Groq · FastAPI · React — 4 agents, 0 dollars
+      </footer>
     </div>
   );
 }

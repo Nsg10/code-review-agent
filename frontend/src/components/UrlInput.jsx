@@ -9,20 +9,28 @@ export function UrlInput({ onSubmit, loading }) {
   };
 
   return (
-    <div className="url-input-container">
-      <form onSubmit={handleSubmit} className="url-form">
+    <form onSubmit={handleSubmit}>
+      <div className="input-wrapper">
+        <span className="input-prefix">github.com/</span>
         <input
           type="text"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
-          placeholder="https://github.com/username/repo"
+          placeholder="username/repository"
           className="url-input"
           disabled={loading}
         />
-        <button type="submit" className="submit-btn" disabled={loading || !url.trim()}>
-          {loading ? "Analysing..." : "Review Repo"}
+        <button
+          type="submit"
+          className="submit-btn"
+          disabled={loading || !url.trim()}
+        >
+          {loading ? "Analysing..." : "Review Repo →"}
         </button>
-      </form>
-    </div>
+      </div>
+      <p className="input-hint">
+        Try: facebook/react · vercel/next.js · golang/go
+      </p>
+    </form>
   );
 }
