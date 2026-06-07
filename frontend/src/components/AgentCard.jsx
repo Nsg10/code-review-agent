@@ -21,6 +21,8 @@ export function AgentCard({ agent, result, index }) {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const hasContent = parsed.score !== null || parsed.summary || parsed.sections.length > 0;
+
   return (
     <div
       className={`agent-card ${config.theme}`}
@@ -75,6 +77,10 @@ export function AgentCard({ agent, result, index }) {
           >
             {expanded ? "Show less ↑" : "Show full review ↓"}
           </button>
+        )}
+
+        {!hasContent && (
+          <pre className="agent-result">{result}</pre>
         )}
       </div>
     </div>
