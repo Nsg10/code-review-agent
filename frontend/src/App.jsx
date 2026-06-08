@@ -5,7 +5,7 @@ import { LoadingState } from "./components/LoadingState";
 import "./App.css";
 
 function App() {
-  const { loading, results, error, reviewRepo, reset } = useReview();
+  const { loading, results, error, reviewRepo, reset, totalReviews } = useReview();
 
   return (
     <div className="app">
@@ -28,6 +28,12 @@ function App() {
           <span className="pill"><span className="pill-icon">⚡</span> Optimizer</span>
           <span className="pill"><span className="pill-icon">🏗️</span> System Design</span>
         </div>
+        {totalReviews !== null && (
+          <div className="counter-badge">
+            <span className="counter-number">{totalReviews.toLocaleString()}</span>
+            <span className="counter-label">repositories reviewed</span>
+          </div>
+        )}
       </section>
 
       <div className="input-section">

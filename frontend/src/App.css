@@ -524,3 +524,27 @@ body::before {
   .hero { padding: 60px 24px 40px; }
   .results-header { flex-direction: column; align-items: flex-start; gap: 12px; }
 }
+/* COUNTER BADGE */
+.counter-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(63, 185, 80, 0.08);
+  border: 1px solid rgba(63, 185, 80, 0.2);
+  border-radius: 100px;
+  padding: 8px 18px;
+  margin-top: 24px;
+}
+
+.counter-number {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--green);
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.counter-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+}
