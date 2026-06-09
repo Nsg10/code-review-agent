@@ -21,7 +21,7 @@ export function Dashboard({ results, onReset }) {
       </div>
       <div className="agents-grid">
         {results.agents.map((item, i) => (
-          <AgentCard key={item.agent} agent={item.agent} result={item.result} index={i} />
+          <AgentCard key={item.agent} agent={item.agent} result={item.result} index={i} repoUrl={results.repo_url} />
         ))}
       </div>
     </div>

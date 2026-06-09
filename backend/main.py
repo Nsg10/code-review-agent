@@ -6,6 +6,7 @@ from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 from services.github_fetcher import fetch_repo_contents
 from services.orchestrator import run_all_agents
+from services.supabase_client import get_total_reviews, increment_review_count, save_rating
 
 limiter = Limiter(key_func=get_remote_address)
 
@@ -21,11 +22,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-review_counter = {"count": 0}
-
 
 class ReviewRequest(BaseModel):
     repo_url: str
+
+
+class RatingRequest(BaseModel):
+    repo_url: str
+    agent_name: str
+    rating: int
 
 
 @app.get("/")
@@ -35,7 +40,18 @@ async def root():
 
 @app.get("/stats")
 async def get_stats():
-    return {"total_reviews": review_counter["count"]}
+    total = await get_total_reviews()
+    return {"total_reviews": total}
+
+
+@app.post("/rate")
+async def rate_agent(body: RatingRequest):
+    if body.rating not in [1, -1]:
+        raise HTTPException(status_code=400, detail="Rating must be 1 or -1")
+    success = await save_rating(body.repo_url, body.agent_name, body.rating)
+    if not success:
+        raise HTTPException(status_code=500, detail="Failed to save rating")
+    return {"status": "ok"}
 
 
 @app.post("/review")
@@ -51,12 +67,12 @@ async def review_repo(request: Request, body: ReviewRequest):
             )
 
         results = await run_all_agents(code)
-        review_counter["count"] += 1
+        total_reviews = await increment_review_count()
 
         return {
             "repo_url": body.repo_url,
             "agents": results,
-            "total_reviews": review_counter["count"]
+            "total_reviews": total_reviews
         }
 
     except HTTPException:

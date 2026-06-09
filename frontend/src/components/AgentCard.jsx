@@ -2,6 +2,8 @@ import { useState } from "react";
 import { ScoreRing } from "./ScoreRing";
 import { parseAgentResult } from "../utils/parseResult";
 
+const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
+
 const AGENT_CONFIG = {
   "Code Quality": { icon: "⚙️", theme: "theme-quality", tag: "QUALITY" },
   "Bug Detector": { icon: "🐛", theme: "theme-bugs", tag: "BUGS" },
@@ -9,11 +11,14 @@ const AGENT_CONFIG = {
   "System Design":{ icon: "🏗️", theme: "theme-design", tag: "ARCH" },
 };
 
-export function AgentCard({ agent, result, index }) {
+export function AgentCard({ agent, result, index, repoUrl }) {
   const [expanded, setExpanded] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [rating, setRating] = useState(null);
   const config = AGENT_CONFIG[agent] || { icon: "🤖", theme: "", tag: "AI" };
   const parsed = parseAgentResult(result);
+
+  const hasContent = parsed.score !== null || parsed.summary || parsed.sections.length > 0;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(result);
@@ -21,7 +26,23 @@ export function AgentCard({ agent, result, index }) {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const hasContent = parsed.score !== null || parsed.summary || parsed.sections.length > 0;
+  const handleRating = async (value) => {
+    if (rating !== null) return;
+    setRating(value);
+    try {
+      await fetch(`${API_URL}/rate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          repo_url: repoUrl,
+          agent_name: agent,
+          rating: value,
+        }),
+      });
+    } catch (e) {
+      console.error("Rating failed", e);
+    }
+  };
 
   return (
     <div
@@ -82,6 +103,27 @@ export function AgentCard({ agent, result, index }) {
         {!hasContent && (
           <pre className="agent-result">{result}</pre>
         )}
+
+        <div className="rating-row">
+          <span className="rating-label">Was this helpful?</span>
+          <button
+            className={`rating-btn ${rating === 1 ? "active-up" : ""}`}
+            onClick={() => handleRating(1)}
+            disabled={rating !== null}
+          >
+            👍
+          </button>
+          <button
+            className={`rating-btn ${rating === -1 ? "active-down" : ""}`}
+            onClick={() => handleRating(-1)}
+            disabled={rating !== null}
+          >
+            👎
+          </button>
+          {rating !== null && (
+            <span className="rating-thanks">Thanks for the feedback!</span>
+          )}
+        </div>
       </div>
     </div>
   );
