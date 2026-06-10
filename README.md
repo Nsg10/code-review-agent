@@ -2,7 +2,7 @@
 
 > Paste any public GitHub repository URL and get an instant multi-perspective AI code review from 4 specialized agents running in parallel.
 
-**[Live Demo](https://code-review-agent-2wnwxm6gw-niharika-s-projects4.vercel.app)** · **[Backend API](https://code-review-agent-api-ovr9.onrender.com)**
+**[Live Demo](https://code-review-agent-eight.vercel.app)** · **[Backend API](https://code-review-agent-api-ovr9.onrender.com)**
 
 ---
 
