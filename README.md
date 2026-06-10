@@ -23,23 +23,16 @@ All 4 agents run simultaneously via `asyncio.gather()` — total review time ~5 
 
 ## Architecture
 
-User → React Frontend (Vercel)
-↓ POST /review
-FastAPI Backend (Render)
-↓
-GitHub API → fetch top 5 files (smart prioritization)
-↓
-LangChain Orchestrator
-↓ asyncio.gather()
-┌──────┬──────┬──────┬──────┐
-Agent1 Agent2 Agent3 Agent4  (Groq LLaMA 3.1)
-└──────┴──────┴──────┴──────┘
-↓
-Merged JSON response
-↓
-React Dashboard
-↓
-Supabase (ratings + review counter)
+1. User pastes GitHub URL → React Frontend (Vercel)
+2. Frontend sends POST /review → FastAPI Backend (Render)
+3. Backend fetches top 5 files via GitHub API (smart prioritization)
+4. LangChain Orchestrator runs 4 agents in parallel via asyncio.gather()
+   ├── Agent 1: Code Quality  (Groq LLaMA 3.1)
+   ├── Agent 2: Bug Detector  (Groq LLaMA 3.1)
+   ├── Agent 3: Optimizer     (Groq LLaMA 3.1)
+   └── Agent 4: System Design (Groq LLaMA 3.1)
+5. Merged JSON response → React Dashboard
+6. Ratings + review counter saved to Supabase
 
 ---
 
@@ -103,6 +96,7 @@ pytest -v
 
 ## Project Structure
 
+```
 code-review-agent/
 ├── frontend/                    # React + Vite → Vercel
 │   └── src/
@@ -111,13 +105,14 @@ code-review-agent/
 │       └── utils/               # parseResult (structured output parser)
 │
 └── backend/                     # FastAPI → Render
-├── agents/                  # 4 LangChain + Groq agents
-├── services/
-│   ├── github_fetcher.py    # Smart file prioritization
-│   ├── orchestrator.py      # asyncio.gather() parallel execution
-│   └── supabase_client.py   # Persistent counter + ratings
-├── tests/                   # 10 pytest tests
-└── main.py                  # FastAPI routes + rate limiting
+    ├── agents/                  # 4 LangChain + Groq agents
+    ├── services/
+    │   ├── github_fetcher.py    # Smart file prioritization
+    │   ├── orchestrator.py      # asyncio.gather() parallel execution
+    │   └── supabase_client.py   # Persistent counter + ratings
+    ├── tests/                   # 10 pytest tests
+    └── main.py                  # FastAPI routes + rate limiting
+```
 
 ---
 
